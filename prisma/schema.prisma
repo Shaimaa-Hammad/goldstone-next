@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  name         String?
+  passwordHash String
+  roleId       String?
+  role         Role?         @relation(fields: [roleId], references: [id])
+  sessions     Session[]
+  kyc          KYC?
+  listings     Listing[]
+  buyerOrders  EscrowOrder[] @relation("BuyerOrders")
+  sellerOrders EscrowOrder[] @relation("SellerOrders")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Role {
+  id    String @id @default(cuid())
+  name  String @unique
+  users User[]
+}
+
+model KYC {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  status      String
+  level       String?
+  submittedAt DateTime?
+  reviewedAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Listing {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  amount    String
+  purity    String
+  price     Float
+  status    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User          @relation(fields: [userId], references: [id])
+  orders EscrowOrder[]
+}
+
+model EscrowOrder {
+  id        String   @id @default(cuid())
+  listingId String
+  buyerId   String
+  sellerId  String
+  status    String
+  total     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  listing Listing @relation(fields: [listingId], references: [id])
+  buyer   User    @relation("BuyerOrders", fields: [buyerId], references: [id])
+  seller  User    @relation("SellerOrders", fields: [sellerId], references: [id])
+}

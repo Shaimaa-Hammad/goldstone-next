@@ -1,0 +1,21 @@
+{
+  "name": "Gold Trading Platform",
+  "short_name": "GoldTrade",
+  "description": "Secure gold trading platform with escrow and verified merchants.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f9f5ec",
+  "theme_color": "#f6b734",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
